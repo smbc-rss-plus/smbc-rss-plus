@@ -10,7 +10,7 @@ To address this, somebody (**TODO**) created a Yahoo Pipe. I've since forked it 
 
 ## Rough New Architecture
 
-It's just a Docker container that has `supervisor` running `nginx` which serves a directory *and* a Python script that grabs the existing RSS feed, modifies it, and updates the served RSS file on "disk" within that directory every 15 minutes. Logs exceptions to Rollbar. KISS. 
+It's just a Docker container that has a Python script that grabs the existing RSS feed, modifies it, and updates the served RSS file on some S3 container. KISS. Should cost me less than a few cents a month. 
 
 ## RIP Yahoo Pipes
 
