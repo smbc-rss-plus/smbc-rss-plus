@@ -6,7 +6,11 @@ Do you use a mobile RSS Reader? How many of them have added support for showing 
 
 Unfortunately, the red-button bonus image situation with SMBC is a bit more complicated than that. It is *usually* at some URL that is derived from the original image. Also, SMBC is probably not as popular as XKCD to get special functionality developed for it.
 
-To address this, somebody (**TODO**) created a Yahoo Pipe. I've sinced forked it to address issues with the new "post-png" button images. Alas, Yahoo Pipes is shutting down. As such, this whole operation is going to need a new implementation. This is it.
+To address this, somebody (**TODO**) created a Yahoo Pipe. I've since forked it to address issues with the new "post-png" button images. Alas, Yahoo Pipes is shutting down. As such, this whole operation is going to need a new implementation. This is it.
+
+## Rough New Architecture
+
+It's just a Docker container that has `supervisor` running `nginx` which serves a directory *and* a Python script that grabs the existing RSS feed, modifies it, and updates the served RSS file on "disk" within that directory every 15 minutes. Logs exceptions to Rollbar. KISS. 
 
 ## RIP Yahoo Pipes
 
