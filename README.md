@@ -14,6 +14,10 @@ To address this, somebody (**TODO**) created a Yahoo Pipe. I've since forked it 
 
 It's just a Docker container that has a Python script that grabs the existing RSS feed, modifies it, and updates the served RSS file on some S3 container. KISS. Should cost me less than a few cents a month.
 
+### TODO
+
+No longer limited to Regexps, we could scrape the linked comic for the *exact* red button link.
+
 ## RIP Yahoo Pipes
 
 This was originally based on this Yahoo Pipe. I can't link it because Yahoo Pipes is going to be dead but I can provide this screenshot of the pipe and the two cut-off text-fields.
