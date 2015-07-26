@@ -161,7 +161,17 @@ a.button span {
 #view-on-github span {
   background: transparent url(../images/octocat-icon.png) 12px 50% no-repeat;
 }
+
 #view-on-github {
+  margin-right: 0;
+}
+
+#rss-feed span {
+	height: 30px;
+  background: transparent url(../images/rss-icon.gif) 12px 50% no-repeat;
+}
+
+#rss-feed {
   margin-right: 0;
 }
 
