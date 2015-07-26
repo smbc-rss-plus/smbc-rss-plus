@@ -1,5 +1,7 @@
 # SMBC RSS Plus Feed
 
+![](readme/button.png)
+
 I have a question to ask you:
 
 Do you use a mobile RSS Reader? How many of them have added support for showing the contents of `alt` when you long-press on an image? I'm guessing we have to thank the popularity of XKCD for that!
@@ -10,7 +12,7 @@ To address this, somebody (**TODO**) created a Yahoo Pipe. I've since forked it 
 
 ## Rough New Architecture
 
-It's just a Docker container that has a Python script that grabs the existing RSS feed, modifies it, and updates the served RSS file on some S3 container. KISS. Should cost me less than a few cents a month. 
+It's just a Docker container that has a Python script that grabs the existing RSS feed, modifies it, and updates the served RSS file on some S3 container. KISS. Should cost me less than a few cents a month.
 
 ## RIP Yahoo Pipes
 
