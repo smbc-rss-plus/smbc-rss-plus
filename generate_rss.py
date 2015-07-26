@@ -9,9 +9,15 @@ def update_rss():
     root = tree.getroot()
 
     for description in root.findall('./channel/item/description'):
+        # Should I be doing this with Regexps? Probably not. Do I care? No.
+        # Tony the Pony, I welcome you!
         pattern = r'<img src="http://www\.smbc-comics\.com/comics/(\d+\-\d+)\.([pg][ni][gf])"/>(.*)'
         replace = r'<img src="http://www.smbc-comics.com/comics/\1.\2"><br><br>' \
-                  r'<img src="http://www.smbc-comics.com/comics/\1after.png">\3'
+                  r'<img src="http://www.smbc-comics.com/comics/\1after.png"><br>' \
+                  r'<p>' \
+                  r'Red Button pushing provided by <a href="http://smbc-rss-plus.mindflakes.com">SMBC RSS Plus</a>' \
+                  r'</p><br>' \
+                  r'\3'
         description.text = re.sub(pattern, replace, description.text)
 
     processed_feed = ETree.tostring(root)
