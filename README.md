@@ -1,6 +1,6 @@
 # SMBC RSS Plus Feed
 
-![](readme/button.png)
+![](readme/button.jpg)
 
 I have a question to ask you:
 
