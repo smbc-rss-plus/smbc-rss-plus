@@ -16,7 +16,8 @@ It's just a Docker container that has a Python script that grabs the existing RS
 
 ### TODO
 
-No longer limited to Regexps, we could scrape the linked comic for the *exact* red button link.
+* No longer limited to Regexps, we could scrape the linked comic for the *exact* red button link.
+* Dockerize and get off Heroku
 
 ## RIP Yahoo Pipes
 
