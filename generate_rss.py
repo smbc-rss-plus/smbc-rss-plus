@@ -8,6 +8,15 @@ def update_rss():
     tree = ETree.parse(request.raw)
     root = tree.getroot()
 
+    for title in root.findall('./channel/title'):
+        title.text = "SMBC + Bonus Drawing"
+
+    for link in root.findall('./channel/link'):
+        link.text = 'http://smbc-rss-plus.mindflakes.com/'
+
+    for atom_link in root.findall("./channel/{http://www.w3.org/2005/Atom}link"):
+        atom_link.set('href', 'http://smbc-rss-plus.mindflakes.com/rss.xml')
+
     for description in root.findall('./channel/item/description'):
         # Should I be doing this with Regexps? Probably not. Do I care? No.
         # Tony the Pony, I welcome you!
