@@ -29,4 +29,6 @@ def update_rss():
                                                          ContentType='application/xml')
 
 if __name__ == "__main__":
+    print("Updating RSS Feed.")
     update_rss()
+    print("RSS Feed Updated.")
