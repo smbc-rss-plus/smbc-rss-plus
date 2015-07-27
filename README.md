@@ -17,7 +17,6 @@ It's just a Docker container that has a Python script that grabs the existing RS
 ### TODO
 
 * No longer limited to Regexps, we could scrape the linked comic for the *exact* red button link.
-* Dockerize and get off Heroku
 
 ## RIP Yahoo Pipes
 
@@ -34,4 +33,4 @@ Screenshot:
 
 That was the whole thing!
 
-**TODO** Find the first mention on Reddit and give credit.
+That said, as I'm writing this before Yahoo Pipes shuts down forever, there's like 10 or 20 variants of this pipe on Yahoo Pipes. 
