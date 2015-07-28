@@ -8,7 +8,7 @@ Do you use a mobile RSS Reader? How many of them have added support for showing 
 
 Unfortunately, the red-button bonus image situation with SMBC is a bit more complicated than that. It is *usually* at some URL that is derived from the original image. Also, SMBC is probably not as popular as XKCD to get special functionality developed for it.
 
-To address this, somebody (**TODO**) created a Yahoo Pipe. I've since forked it to address issues with the new "post-png" button images. Alas, Yahoo Pipes is shutting down. As such, this whole operation is going to need a new implementation. This is it.
+To address this, many people created their own Yahoo Pipes to solve this. I've since forked one of these to address issues with the new "post-png" button images. Alas, Yahoo Pipes is shutting down. As such, this whole operation is going to need a new implementation. This is it.
 
 ## Rough New Architecture
 
@@ -33,4 +33,4 @@ Screenshot:
 
 That was the whole thing!
 
-That said, as I'm writing this before Yahoo Pipes shuts down forever, there's like 10 or 20 variants of this pipe on Yahoo Pipes. 
+That said, as I'm writing this before Yahoo Pipes shuts down forever, there's like 10 or 20 variants of this pipe on Yahoo Pipes and they're all pretty similar.
