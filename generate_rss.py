@@ -23,11 +23,16 @@ def update_rss():
         pattern = r'<img src="http://www\.smbc-comics\.com/comics/(\d+\-\d+)\.([pg][ni][gf])"/>(.*)'
         replace = r'<img src="http://www.smbc-comics.com/comics/\1.\2"><br><br>' \
                   r'<img src="http://www.smbc-comics.com/comics/\1after.png"><br>' \
-                  r'<p>' \
-                  r'Red Button pushing provided by <a href="http://smbc-rss-plus.mindflakes.com">SMBC RSS Plus</a>' \
-                  r'</p><br>' \
                   r'\3'
-        description.text = re.sub(pattern, replace, description.text)
+
+        tagline = r'<p>' \
+                  r'<hr>' \
+                  r'Red Button pushing provided by ' \
+                  r'<a href="http://smbc-rss-plus.mindflakes.com">SMBC RSS Plus</a>' \
+                  r'</p>' \
+                  r'<br>'
+
+        description.text = re.sub(pattern, replace, description.text) + tagline
 
     processed_feed = ETree.tostring(root)
 
