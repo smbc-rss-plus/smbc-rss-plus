@@ -1,8 +1,10 @@
 # SMBC RSS Plus Feed
 
+*Also known as the SMBC + Red Button or Bonus Image Feed*
+
 ![](readme/button.jpg)
 
-I have a question to ask you:
+I have a question to ask you!
 
 Do you use a mobile RSS Reader? How many of them have added support for showing the contents of `alt` when you long-press on an image? I'm guessing we have to thank the popularity of XKCD for that!
 
@@ -12,15 +14,17 @@ To address this, many people created their own Yahoo Pipes to solve this. I've s
 
 ## Rough New Architecture
 
-It's just a Docker container that has a Python script that grabs the existing RSS feed, modifies it, and updates the served RSS file on some S3 container. KISS. Should cost me less than a few cents a month.
+It's just a Heroku app that has no dynos and the Heroku scheduler addon running a script every 10 minutes. Still free, still constantly available. Uses S3 to serve and for persistence. KISS, never worry. When *their* free lunch runs out (and it already has for 24/7 HTTP serving web apps), I can move it.
+
+As it stands, S3 will probably cost me about 2 and a few more cents a month to host. It's a small cost. But, IDGAF, and that's the spirit of it all.
 
 ### TODO
 
-* No longer limited to Regexps, we could scrape the linked comic for the *exact* red button link.
+* As this is no longer limited to regular expressions, perhaps we could scrape the linked comic's page for the *exact* red button link. A broken image comes by every once in a while but maybe the complexity just isn't worth it?
 
 ## RIP Yahoo Pipes
 
-This was originally based on this Yahoo Pipe. I can't link it because Yahoo Pipes is going to be dead but I can provide this screenshot of the pipe and the two cut-off text-fields.
+This was originally based on this Yahoo Pipe. I can't link it because Yahoo Pipes is going to be dead but I can provide this screenshot of the pipe and the two cut-off text-fields. I've also left a JSON dump of the *SHUTDOWN-IMMINENT!* version under the `pipes_archive` directory. Unfortunately, I don't know who I forked my pipe from.
 
 This was the whole pipe:
 
