@@ -20,10 +20,10 @@ def update_rss():
     for description in root.findall('./channel/item/description'):
         # Should I be doing this with Regexps? Probably not. Do I care? No.
         # Tony the Pony, I welcome you!
-        pattern = r'<img src="http://www\.smbc-comics\.com/comics/(\d+\-\d+)\.([pg][ni][gf])"/>(.*)'
-        replace = r'<img src="http://www.smbc-comics.com/comics/\1.\2"><br><br>' \
-                  r'<img src="http://www.smbc-comics.com/comics/\1after.png"><br>' \
-                  r'\3'
+        pattern = r'<img src="http://www\.smbc-comics\.com/comics/\.\./comics/(\d+\-\d+)\.([pg][ni][gf])"/>(.*)'
+        replace = r'<img src="http://www.smbc-comics.com/comics/../comics/\1.\2"><br><br>' \
+                  r'<img src="http://www.smbc-comics.com/comics/../comics/\1after.png"><br>' \
+                  r'\3  '
 
         tagline = r'<p>' \
                   r'<hr>' \
