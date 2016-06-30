@@ -2,6 +2,7 @@ import boto3
 import re
 import requests
 import xml.etree.ElementTree as ETree
+import redis
 
 def update_rss():
     request = requests.get('http://www.smbc-comics.com/rss.php', stream=True)
@@ -36,11 +37,18 @@ def update_rss():
 
     processed_feed = ETree.tostring(root)
 
+    print(processed_feed)
+    
+
+def upload_str(feed: str):
     s3 = boto3.resource('s3')
     s3.Bucket('smbc-rss-plus.mindflakes.com').put_object(Key='rss.xml',
-                                                         Body=processed_feed,
+                                                         Body=feed,
                                                          ACL='public-read',
                                                          ContentType='application/xml')
+
+def process_description(description):
+    pass
 
 if __name__ == "__main__":
     print("Updating RSS Feed.")
