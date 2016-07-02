@@ -18,9 +18,9 @@ It's just a Heroku app that has no dynos and the Heroku scheduler addon running 
 
 As it stands, S3 will probably cost me about 2 and a few more cents a month to host. It's a small cost. But, IDGAF, and that's the spirit of it all.
 
-### TODO
+### New New
 
-* As this is no longer limited to regular expressions, perhaps we could scrape the linked comic's page for the *exact* red button link. A broken image comes by every once in a while but maybe the complexity just isn't worth it?
+* As this is no longer limited to regular expressions, and the RSS feed no longer includes the images nor are the images corresponding to the red button URLs, we are scraping the linked comic's page for the *exact* red button link. Alas, if the scraped page changes, we'll have to update.
 
 ## RIP Yahoo Pipes
 
