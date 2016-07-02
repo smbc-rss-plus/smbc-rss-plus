@@ -1,13 +1,17 @@
+import os
+import random
+
 import boto3
-import re
 import requests
-import xml.etree.ElementTree as ETree
+from lxml import html
+import lxml
 import redis
 
+
 def update_rss():
-    request = requests.get('http://www.smbc-comics.com/rss.php', stream=True)
-    tree = ETree.parse(request.raw)
-    root = tree.getroot()
+    request = requests.get('http://www.smbc-comics.com/rss.php', stream=True, timeout=20)
+    root = lxml.etree.fromstring(request.content)
+    cached_redis = redis.from_url(os.environ.get("REDIS_URL"))
 
     for title in root.findall('./channel/title'):
         title.text = "SMBC + Bonus Drawing"
@@ -19,26 +23,53 @@ def update_rss():
         atom_link.set('href', 'http://smbc-rss-plus.mindflakes.com/rss.xml')
 
     for description in root.findall('./channel/item/description'):
-        # Should I be doing this with Regexps? Probably not. Do I care? No.
-        # Tony the Pony, I welcome you!
-        pattern = r'<img src="http://www\.smbc-comics\.com/comics/\.\./comics/(\d+\-\d+)\.([pg][ni][gf])"/>(.*)'
-        replace = r'<img src="http://www.smbc-comics.com/comics/../comics/\1.\2"><br><br>' \
-                  r'<img src="http://www.smbc-comics.com/comics/../comics/\1after.png"><br>' \
-                  r'\3  '
+        description_root = html.fromstring(description.text)
 
+        # Get Comic Link from description
+        comic_url = description_root.xpath('/html/body/a/@href')[0]
+
+        # Check if this item was already processed and restore the cached description
+        new_description_str = cached_redis.get(str(comic_url))
+        if new_description_str:
+            description.text = new_description_str
+            continue
+
+        # Get comic's HTML
+        comic_scrape_html = requests.get(comic_url, timeout=20)
+        # Parse for Red Button Link in HTML
+        comic_root = html.fromstring(comic_scrape_html.content)
+        comic_img = comic_root.xpath("//*[@id=\"cc-comic\"]")[0]
+        # Remove the id attribute since it's the right thing to do.
+        comic_img.attrib.pop('id')
+        red_button_comic_img = comic_root.xpath("//*[@id=\"aftercomic\"]/img")[0]
+        # A break
+        description_root.insert(0, lxml.html.Element("br"))
+        # Stick the Red Button Image at the top
+        description_root.insert(0, red_button_comic_img)
+        # And a break
+        description_root.insert(0, lxml.html.Element("br"))
+        # Then at the top again, insert the comic image which had gone missing?
+        description_root.insert(0, comic_img)
+
+        # Add tagline so that users may find the RSS feed should it be desired
         tagline = r'<p>' \
                   r'<hr>' \
                   r'Red Button pushing provided by ' \
                   r'<a href="http://smbc-rss-plus.mindflakes.com">SMBC RSS Plus</a>' \
                   r'</p>' \
                   r'<br>'
+        tagline_root = html.fromstring(tagline)
 
-        description.text = re.sub(pattern, replace, description.text) + tagline
+        description_root.append(tagline_root)
 
-    processed_feed = ETree.tostring(root)
+        description.text = lxml.etree.tostring(description_root)
 
-    print(processed_feed)
-    
+        cached_redis.setex(comic_url, description.text, random.randint(3600, 36000))
+
+    processed_feed = lxml.etree.tostring(root)
+
+    upload_str(processed_feed)
+
 
 def upload_str(feed: str):
     s3 = boto3.resource('s3')
@@ -47,8 +78,6 @@ def upload_str(feed: str):
                                                          ACL='public-read',
                                                          ContentType='application/xml')
 
-def process_description(description):
-    pass
 
 if __name__ == "__main__":
     print("Updating RSS Feed.")
