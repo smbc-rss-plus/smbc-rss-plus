@@ -8,13 +8,17 @@ I have a question to ask you!
 
 Do you use a mobile RSS Reader? How many of them have added support for showing the contents of `alt` when you long-press on an image? I'm guessing we have to thank the popularity of XKCD for that!
 
-Unfortunately, the red-button bonus image situation with SMBC is a bit more complicated than that. It is *usually* at some URL that is derived from the original image. Also, SMBC is probably not as popular as XKCD to get special functionality developed for it.
+Unfortunately, the red-button bonus image situation with SMBC is a bit more complicated than that. It was *usually* at some URL that is derived from the original image. Also, SMBC is probably not as popular as XKCD to get special functionality developed for it.
 
 To address this, many people created their own Yahoo Pipes to solve this. I've since forked one of these to address issues with the new "post-png" button images. Alas, Yahoo Pipes is shutting down. As such, this whole operation is going to need a new implementation. This is it.
+
+As mentioned, due to some site changes, the URL of the red button images are no longer guaranteed to line up with the URL for the image. As such, the only thing to do is to scrape the linked comic itself and append an image to the end of the RSS feed. 
 
 ## Rough New Architecture
 
 It's just a Heroku app that has no dynos and the Heroku scheduler addon running a script every 10 minutes. Still free, still constantly available. Uses S3 to serve and for persistence. KISS, never worry. When *their* free lunch runs out (and it already has for 24/7 HTTP serving web apps), I can move it.
+ 
+ With the red button images aligning to the comic image URL less and less, this script was updated to use a Redis instance for caching the results of scraping the comic's HTML. It too is also hosted for free by Heroku for no cost. 
 
 As it stands, S3 will probably cost me about 2 and a few more cents a month to host. It's a small cost. But, IDGAF, and that's the spirit of it all.
 
