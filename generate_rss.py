@@ -38,18 +38,11 @@ def update_rss():
         comic_scrape_html = requests.get(comic_url, timeout=20)
         # Parse for Red Button Link in HTML
         comic_root = html.fromstring(comic_scrape_html.content)
-        comic_img = comic_root.xpath("//*[@id=\"cc-comic\"]")[0]
-        # Remove the id attribute since it's the right thing to do.
-        comic_img.attrib.pop('id')
         red_button_comic_img = comic_root.xpath("//*[@id=\"aftercomic\"]/img")[0]
         # A break
-        description_root.insert(0, lxml.html.Element("br"))
+        description_root.append(lxml.html.Element("br"))
         # Stick the Red Button Image at the top
-        description_root.insert(0, red_button_comic_img)
-        # And a break
-        description_root.insert(0, lxml.html.Element("br"))
-        # Then at the top again, insert the comic image which had gone missing?
-        description_root.insert(0, comic_img)
+        description_root.append(red_button_comic_img)
 
         # Add tagline so that users may find the RSS feed should it be desired
         tagline = r'<p>' \
