@@ -3,6 +3,7 @@ import random
 
 import boto3
 import requests
+import sys
 from lxml import html
 import lxml
 import redis
@@ -61,7 +62,13 @@ def update_rss():
 
     processed_feed = lxml.etree.tostring(root)
 
-    upload_str(processed_feed)
+    if "test" in sys.argv:
+        with open("test.xml", "wb") as f:
+            print("Writing Test Locally")
+            f.write(processed_feed)
+    else:
+        print("Uploading to S3")
+        upload_str(processed_feed)
 
 
 def upload_str(feed: str):
