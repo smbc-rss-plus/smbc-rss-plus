@@ -55,12 +55,16 @@ def update_rss():
         description_root.append(red_button_comic_img)
 
         # Add tagline so that users may find the RSS feed should it be desired
-        tagline = r'<p>' \
-                  r'<hr>' \
-                  r'Full Image and Red Button mashing provided by ' \
-                  r'<a href="http://smbc-rss-plus.mindflakes.com">SMBC RSS Plus</a>' \
-                  r'</p>' \
-                  r'<br>'
+        tagline = '<p>' \
+                  '<hr>' \
+                  'Full Image and Red Button mashing provided by ' \
+                  '<a href="http://smbc-rss-plus.mindflakes.com">SMBC RSS Plus</a>. ' \
+                  'If you consume this comic through RSS, you may want to support ' \
+                  '<a href="https://www.patreon.com/ZachWeinersmith">Zach\'s Patreon</a> ' \
+                  'for like a $1 or something at least especially' \
+                  ' since this is scraping the site deeper than provided.' \
+                  '</p>' \
+                  '<br>'
         tagline_root = html.fromstring(tagline)
 
         description_root.append(tagline_root)
