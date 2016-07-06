@@ -37,18 +37,27 @@ def update_rss():
 
         # Get comic's HTML
         comic_scrape_html = requests.get(comic_url, timeout=20)
-        # Parse for Red Button Link in HTML
         comic_root = html.fromstring(comic_scrape_html.content)
+        # Parse for Comic Img
+        comic_img = comic_root.xpath("//*[@id=\"cc-comic\"]")[0]
+        # Remove the id attribute since it's the right thing to do.
+        comic_img.attrib.pop('id')
+        # Parse for Red Button Link
         red_button_comic_img = comic_root.xpath("//*[@id=\"aftercomic\"]/img")[0]
         # A break
+        # Append the full image at the bottom
+        description_root.append(lxml.html.Element("hr"))
         description_root.append(lxml.html.Element("br"))
-        # Stick the Red Button Image at the top
+        description_root.append(comic_img)
+        # Stick the Red Button Image at the bottom
+        description_root.append(lxml.html.Element("br"))
+        description_root.append(lxml.html.Element("br"))
         description_root.append(red_button_comic_img)
 
         # Add tagline so that users may find the RSS feed should it be desired
         tagline = r'<p>' \
                   r'<hr>' \
-                  r'Red Button pushing provided by ' \
+                  r'Full Image and Red Button mashing provided by ' \
                   r'<a href="http://smbc-rss-plus.mindflakes.com">SMBC RSS Plus</a>' \
                   r'</p>' \
                   r'<br>'
