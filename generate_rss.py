@@ -46,11 +46,7 @@ def update_rss():
         red_button_comic_img = comic_root.xpath("//*[@id=\"aftercomic\"]/img")[0]
         # A break
         description_root.append(lxml.html.Element("hr"))
-        # Append the full image at the bottom
-        description_root.append(lxml.html.Element("br"))
-        description_root.append(comic_img)
         # Stick the Red Button Image at the bottom
-        description_root.append(lxml.html.Element("br"))
         description_root.append(lxml.html.Element("br"))
         description_root.append(red_button_comic_img)
 
