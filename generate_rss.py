@@ -53,7 +53,7 @@ def update_rss():
         # Add tagline so that users may find the RSS feed should it be desired
         tagline = '<p>' \
                   '<hr>' \
-                  'Full Image and Red Button mashing provided by ' \
+                  'Red Button mashing provided by ' \
                   '<a href="http://smbc-rss-plus.mindflakes.com">SMBC RSS Plus</a>. ' \
                   'If you consume this comic through RSS, you may want to support ' \
                   '<a href="https://www.patreon.com/ZachWeinersmith">Zach\'s Patreon</a> ' \
