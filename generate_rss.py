@@ -67,7 +67,7 @@ def update_rss():
 
         description.text = lxml.etree.tostring(description_root)
 
-        cached_redis.setex(comic_url, description.text, random.randint(3600, 36000))
+        cached_redis.setex(comic_url, description.text, random.randint(1800, 3600))
 
     processed_feed = lxml.etree.tostring(root)
 
