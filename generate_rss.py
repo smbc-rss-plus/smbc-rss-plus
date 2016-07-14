@@ -23,16 +23,16 @@ def update_rss():
     for atom_link in root.findall("./channel/{http://www.w3.org/2005/Atom}link"):
         atom_link.set('href', 'http://smbc-rss-plus.mindflakes.com/rss.xml')
 
-    for description in root.findall('./channel/item/description'):
-        description_root = html.fromstring(description.text)
+    for item in root.findall('./channel/item'):
+        description_root = html.fromstring(item.findall("description")[0].text)
 
-        # Get Comic Link from description
-        comic_url = description_root.xpath('/html/body/a/@href')[0]
+        # Get Comic Link from Item Link
+        comic_url = item.findall("link")[0].text
 
         # Check if this item was already processed and restore the cached description
-        new_description_str = cached_redis.get(str(comic_url))
+        new_description_str = cached_redis.get(comic_url)
         if new_description_str:
-            description.text = new_description_str
+            description_root.text = new_description_str
             continue
 
         # Get comic's HTML
@@ -65,9 +65,10 @@ def update_rss():
 
         description_root.append(tagline_root)
 
-        description.text = lxml.etree.tostring(description_root)
+        item.findall("description")[0].text = lxml.etree.tostring(description_root)
 
-        cached_redis.setex(comic_url, description.text, random.randint(1800, 3600))
+        if "test" not in sys.argv:
+            cached_redis.setex(comic_url, item.text, random.randint(1800, 3600))
 
     processed_feed = lxml.etree.tostring(root)
 
