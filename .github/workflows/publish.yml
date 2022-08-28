@@ -3,6 +3,9 @@ name: Publish
 on:
   push:
     branches: [ master ]
+  # Run every hour
+  schedule:
+    - cron: "0 * * * *"
   workflow_dispatch:
 
 permissions:
