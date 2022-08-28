@@ -1,18 +1,14 @@
-import os
-import random
-
-import boto3
-import requests
-import sys
+from datetime import datetime, timedelta
+import requests_cache
 from lxml import html
 import lxml
-import redis
 
 
 def update_rss():
-    request = requests.get('http://www.smbc-comics.com/rss.php', stream=True, timeout=20)
+    session = requests_cache.CachedSession('cache/cache.sqlite')
+
+    request = session.get('http://www.smbc-comics.com/rss.php', stream=True, timeout=20)
     root = lxml.etree.fromstring(request.content)
-    cached_redis = redis.from_url(os.environ.get("REDIS_URL"))
 
     for title in root.findall('./channel/title'):
         title.text = "SMBC + Bonus Drawing"
@@ -29,14 +25,8 @@ def update_rss():
         # Get Comic Link from Item Link
         comic_url = item.findall("link")[0].text
 
-        # Check if this item was already processed and restore the cached description
-        new_description_str = cached_redis.get(comic_url)
-        if new_description_str:
-            description_root.text = new_description_str
-            continue
-
         # Get comic's HTML
-        comic_scrape_html = requests.get(comic_url, timeout=20)
+        comic_scrape_html = session.get(comic_url, timeout=20, expire_after=timedelta(days=1))
         comic_root = html.fromstring(comic_scrape_html.content)
         # Parse for Comic Img
         comic_img = comic_root.xpath("//*[@id=\"cc-comic\"]")[0]
@@ -67,27 +57,11 @@ def update_rss():
 
         item.findall("description")[0].text = lxml.etree.tostring(description_root)
 
-        if "test" not in sys.argv:
-            cached_redis.setex(comic_url, item.text, random.randint(1800, 3600))
-
     processed_feed = lxml.etree.tostring(root)
 
-    if "test" in sys.argv:
-        with open("test.xml", "wb") as f:
-            print("Writing Test Locally")
-            f.write(processed_feed)
-    else:
-        print("Uploading to S3")
-        upload_str(processed_feed)
-
-
-def upload_str(feed: str):
-    s3 = boto3.resource('s3')
-    s3.Bucket('smbc-rss-plus.mindflakes.com').put_object(Key='rss.xml',
-                                                         Body=feed,
-                                                         ACL='public-read',
-                                                         ContentType='application/xml')
-
+    with open("output/rss.xml", "wb") as f:
+        print("Writing Feed Locally")
+        f.write(processed_feed)
 
 if __name__ == "__main__":
     print("Updating RSS Feed.")
