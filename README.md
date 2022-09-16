@@ -12,7 +12,11 @@ Unfortunately, the red-button bonus image situation with SMBC is a bit more comp
 
 To address this, many people had created their own Yahoo Pipes to solve this. I had forked one of these to address issues with the new "post-png" button images. Alas, Yahoo Pipes had shut down. As such, this whole operation needed a new implementation. This is it.
 
-As mentioned, due to some site changes and some further site changes, the URL of the red button images are no longer guaranteed to line up with the URL for the image. As such, the only thing to do is to scrape the linked comic itself and append an image to the end of the RSS feed. This architecture is capable of doing that.
+As mentioned, due to some site changes and some further site changes, the URL of the red button images are no longer guaranteed to line up with the URL for the image. As such, the only thing to do is to scrape the linked comic itself and append an image to the end of the RSS feed. The new architecture ran on Heroku with its cronjobs. Alas, it too died and went paid only.
+
+So now this exists, and runs purely on GitHub actions.
+
+This architecture is capable of doing that.
 
 ## Architecture
 
