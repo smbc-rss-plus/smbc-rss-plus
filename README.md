@@ -21,18 +21,3 @@ This architecture is capable of doing that.
 ## Architecture
 
 This is a GitHub Actions repo that simply runs periodically. It pushes its output to GitHub Pages. It caches requests against smbc-comics.com for days. This is free and runs periodically every hour.
-
-## RIP Yahoo Pipes ⚰️
-
-This was originally based on this Yahoo Pipe. It can't be linked because Yahoo Pipes is dead but I can provide this screenshot of the pipe and the two cut-off text-fields. I've also left a JSON dump of the *SHUTDOWN-IMMINENT!* version under the `pipes_archive` directory. Unfortunately, I don't know who I forked my pipe from or who the original author is.
-
-This was the whole pipe:
-
-![](readme/original_pipe.png)
-
-Screenshot:
-
-* Replace: `<img src="http://www\.smbc-comics\.com/comics/(\d+\-\d+)\.([pg][ni][gf])"/>(.*)`
-* With: `<img src="http://www\.smbc-comics\.com/comics/$1\.$2"><br><br><img src="http://www\.smbc-comics\.com/comics/$1after\.png">$3`
-
-That was the whole thing!
