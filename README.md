@@ -12,27 +12,12 @@ Unfortunately, the red-button bonus image situation with SMBC is a bit more comp
 
 To address this, many people had created their own Yahoo Pipes to solve this. I had forked one of these to address issues with the new "post-png" button images. Alas, Yahoo Pipes had shut down. As such, this whole operation needed a new implementation. This is it.
 
-As mentioned, due to some site changes and some further site changes, the URL of the red button images are no longer guaranteed to line up with the URL for the image. As such, the only thing to do is to scrape the linked comic itself and append an image to the end of the RSS feed. This new architecture is capable of doing that.
+As mentioned, due to some site changes and some further site changes, the URL of the red button images are no longer guaranteed to line up with the URL for the image. As such, the only thing to do is to scrape the linked comic itself and append an image to the end of the RSS feed. The new architecture ran on Heroku with its cronjobs. Alas, it too died and went paid only.
 
-## Rough New Architecture
+So now this exists, and runs purely on GitHub actions.
 
-This is a Heroku app that has no dynos and the Heroku scheduler addon running a script every 10 minutes. Still free, still constantly available. Uses S3 to serve and for persistence. KISS, never worry. When *their* free lunch runs out (and it already has for 24/7 HTTP serving web apps), I can move it.
- 
-With the red button images aligning to the comic image URL less and less, this script was updated to use a Redis instance for caching the results of scraping the comic's HTML. It too is also hosted for free by Heroku for no cost. 
+This architecture is capable of doing that.
 
-As it stands, S3 will probably cost me about 2 and a few more cents a month to host. It's a small cost. But, IDGAF, and that's the spirit of it all.
+## Architecture
 
-## RIP Yahoo Pipes ⚰️
-
-This was originally based on this Yahoo Pipe. It can't be linked because Yahoo Pipes is dead but I can provide this screenshot of the pipe and the two cut-off text-fields. I've also left a JSON dump of the *SHUTDOWN-IMMINENT!* version under the `pipes_archive` directory. Unfortunately, I don't know who I forked my pipe from or who the original author is.
-
-This was the whole pipe:
-
-![](readme/original_pipe.png)
-
-Screenshot:
-
-* Replace: `<img src="http://www\.smbc-comics\.com/comics/(\d+\-\d+)\.([pg][ni][gf])"/>(.*)`
-* With: `<img src="http://www\.smbc-comics\.com/comics/$1\.$2"><br><br><img src="http://www\.smbc-comics\.com/comics/$1after\.png">$3`
-
-That was the whole thing!
+This is a GitHub Actions repo that simply runs periodically. It pushes its output to GitHub Pages. It caches requests against smbc-comics.com for days. This is free and runs periodically every hour.

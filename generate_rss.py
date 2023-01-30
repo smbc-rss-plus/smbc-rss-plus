@@ -9,7 +9,12 @@ from tenacity import retry, stop_after_attempt
 def update_rss():
     session = requests_cache.CachedSession('cache/cache.sqlite')
 
-    request = session.get('http://www.smbc-comics.com/rss.php', stream=True, timeout=20)
+    request = session.get(
+        'http://www.smbc-comics.com/rss.php',
+        stream=True,
+        expire_after=timedelta(minutes=30),
+        timeout=20
+    )
     root = lxml.etree.fromstring(request.content)
 
     for title in root.findall('./channel/title'):
