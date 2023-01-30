@@ -1,9 +1,11 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 import requests_cache
 from lxml import html
 import lxml
+from tenacity import retry, stop_after_attempt
 
 
+@retry(stop=stop_after_attempt(3))
 def update_rss():
     session = requests_cache.CachedSession('cache/cache.sqlite')
 
