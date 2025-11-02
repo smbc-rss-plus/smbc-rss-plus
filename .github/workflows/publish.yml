@@ -9,11 +9,29 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
 jobs:
+  keep-active:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Create and push empty commit to stub branch
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git checkout --orphan activity-stub
+        git rm -rf .
+        echo "# Activity Stub Branch" > README.md
+        echo "This branch is used to keep the repository active with scheduled commits." >> README.md
+        git add README.md
+        git commit -m "Keep repository active - $(date)"
+        git push origin activity-stub --force
+
   publish:
     runs-on: ubuntu-latest
     environment:
