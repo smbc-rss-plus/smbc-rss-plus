@@ -9,12 +9,12 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pages: write
-  id-token: write
+  contents: read
 
 jobs:
   keep-active:
+    permissions:
+      contents: write
     runs-on: ubuntu-slim
     steps:
     - uses: actions/checkout@v4
@@ -32,11 +32,11 @@ jobs:
         git commit -m "Keep repository active - $(date)"
         git push origin activity-stub --force
 
-  publish:
+  build:
     runs-on: ubuntu-slim
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      artifact-id: ${{ steps.upload.outputs.artifact_id }}
+      feed-sha256: ${{ steps.feed.outputs.sha256 }}
     steps:
     - uses: actions/checkout@v4
     - uses: actions/setup-python@v6
@@ -58,12 +58,69 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-rss-
     - run: python generate_rss.py
+    - name: Fingerprint generated feed
+      id: feed
+      run: echo "sha256=$(sha256sum output/rss.xml | cut -d ' ' -f 1)" >> "$GITHUB_OUTPUT"
     - name: Setup Pages
       uses: actions/configure-pages@v5
     - name: Upload artifact
+      id: upload
       uses: actions/upload-pages-artifact@v3
       with:
         path: 'output'
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-slim
+    permissions:
+      actions: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+    # Upload can finish before the artifact is visible to the deployment service.
+    - name: Wait for the uploaded Pages artifact
+      env:
+        GH_TOKEN: ${{ github.token }}
+        ARTIFACT_ID: ${{ needs.build.outputs.artifact-id }}
+      run: |
+        set -euo pipefail
+        test -n "$ARTIFACT_ID"
+        url="$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/artifacts?name=github-pages"
+        for attempt in {1..12}; do
+          if curl -fsS --max-time 10 -H "Authorization: Bearer $GH_TOKEN" "$url" |
+            jq -e --arg id "$ARTIFACT_ID" '(.artifacts | length == 1) and (.artifacts[0] | (.id | tostring) == $id and .expired == false)' >/dev/null; then
+            exit 0
+          fi
+          echo "Pages artifact not ready (attempt $attempt/12)"
+          if [ "$attempt" -lt 12 ]; then sleep 5; fi
+        done
+        echo "::error::The uploaded Pages artifact did not become visible"
+        exit 1
     - name: Deploy to GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v4
+
+  verify:
+    needs: [build, deploy]
+    runs-on: ubuntu-slim
+    steps:
+    - name: Verify the published RSS
+      env:
+        FEED_SHA256: ${{ needs.build.outputs.feed-sha256 }}
+      run: |
+        set -euo pipefail
+        file="$RUNNER_TEMP/published-rss.xml"
+        for attempt in {1..12}; do
+          url="https://smbc-rss-plus.mindflakes.com/rss.xml?verify=$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT-$attempt"
+          if curl -fsSL --max-time 15 -o "$file" "$url" &&
+            [ "$(sha256sum "$file" | cut -d ' ' -f 1)" = "$FEED_SHA256" ]; then
+            echo "Live RSS matches the generated feed"
+            exit 0
+          fi
+          if [ "$attempt" -lt 12 ]; then sleep 10; fi
+        done
+        echo "::error::Live RSS did not match the generated feed"
+        exit 1
